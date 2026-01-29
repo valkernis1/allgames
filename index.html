@@ -8,8 +8,8 @@
 <style>
 :root {
 --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
---card-bg: rgba(255, 255, 255, 0.05);
---card-border: rgba(255, 255, 255, 0.1);
+--card-bg: rgba(255, 255, 255, 0.08);
+--card-border: rgba(255, 255, 255, 0.15);
 --accent: #4cc9f0;
 --text-main: #ffffff;
 }
@@ -23,17 +23,17 @@ background: var(--bg-gradient);
 color: var(--text-main);
 font-family: 'Nunito', sans-serif;
 height: 100vh;
-overflow: hidden;
+overflow: hidden; /* Блокируем скролл основной страницы */
 }
 
-/* --- MENU SCREENS --- */
+/* --- MENU SCREEN --- */
 #menu-screen {
 display: flex;
 flex-direction: column;
 align-items: center;
 height: 100%;
 padding: 40px 20px;
-transition: opacity 0.3s ease;
+overflow-y: auto; /* Скролл только внутри меню */
 }
 
 .hub-title {
@@ -44,116 +44,126 @@ letter-spacing: 2px;
 background: linear-gradient(to right, #f72585, #4cc9f0);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
-margin-bottom: 40px;
+margin-bottom: 30px;
 text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+text-align: center;
 }
 
 .games-grid {
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
 gap: 25px;
 width: 100%;
-max-width: 1000px;
+justify-content: center;
+padding-bottom: 50px;
 }
 
-/* --- GAME CARD --- */
 .game-card {
 background: var(--card-bg);
 border: 1px solid var(--card-border);
-border-radius: 20px;
-padding: 20px;
+border-radius: 24px;
+padding: 25px;
 cursor: pointer;
-transition: transform 0.2s, box-shadow 0.2s;
+transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 backdrop-filter: blur(10px);
 display: flex;
 flex-direction: column;
 align-items: center;
 text-align: center;
-position: relative;
-overflow: hidden;
+box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .game-card:hover {
-transform: translateY(-5px);
-box-shadow: 0 15px 30px rgba(76, 201, 240, 0.2);
+transform: translateY(-8px) scale(1.02);
+box-shadow: 0 20px 40px rgba(76, 201, 240, 0.3);
 border-color: var(--accent);
+background: rgba(255, 255, 255, 0.12);
 }
 
 .game-icon {
-width: 80px;
-height: 80px;
-border-radius: 15px;
+font-size: 40px;
 margin-bottom: 15px;
-background: linear-gradient(45deg, #4361ee, #f72585);
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 30px;
+background: rgba(255,255,255,0.1);
+width: 80px; height: 80px;
+display: flex; align-items: center; justify-content: center;
+border-radius: 50%;
+box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
 }
 
-.game-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
-.game-desc { font-size: 0.9rem; color: #a0a0a0; margin-bottom: 20px; }
+.game-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
+.game-desc { font-size: 0.9rem; color: #b0b0b0; margin-bottom: 20px; line-height: 1.4; }
+.btn-play { background: var(--accent); color: #000; border: none; padding: 12px 35px; border-radius: 50px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; width: 100%; cursor: pointer; }
 
-.btn-play {
-background: var(--accent);
-color: #000;
-border: none;
-padding: 10px 30px;
-border-radius: 50px;
-font-weight: 800;
-text-transform: uppercase;
-font-size: 0.9rem;
-width: 100%;
-}
-
-/* --- PLACEHOLDER CARD (FOR FUTURE) --- */
-.game-card.soon {
-opacity: 0.5;
-cursor: default;
-}
-.game-card.soon:hover { transform: none; box-shadow: none; border-color: var(--card-border); }
-
-/* --- GAME CONTAINER (IFRAME) --- */
-#game-container {
-position: absolute;
+/* --- GAME CONTAINER (Адаптивная оболочка) --- */
+#game-wrapper-outer {
+position: fixed;
 top: 0; left: 0; width: 100%; height: 100%;
-background: #000;
-display: none; /* Hidden by default */
-flex-direction: column;
+background: rgba(0,0,0,0.85); /* Затемнение фона вокруг игры */
+backdrop-filter: blur(15px);
+display: none; /* Скрыто по умолчанию */
+justify-content: center;
+align-items: center;
 z-index: 1000;
 }
 
-#game-frame {
+/* Это "виртуальный телефон" на экране компьютера */
+#game-device-frame {
+width: 100%;
+height: 100%;
+max-width: 500px; /* Максимальная ширина (как планшет/телефон) */
+max-height: 900px;
+background: #1a1a2e;
+display: flex;
+flex-direction: column;
+position: relative;
+box-shadow: 0 0 100px rgba(76, 201, 240, 0.15);
+}
+
+/* На мобильных устройствах убираем рамки и отступы */
+@media (max-width: 550px) {
+#game-device-frame {
+max-width: 100%;
+max-height: 100%;
+border-radius: 0;
+}
+}
+
+.game-nav {
+height: 60px;
+min-height: 60px;
+background: #16213e;
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0 20px;
+border-bottom: 1px solid rgba(255,255,255,0.1);
+z-index: 10;
+}
+
+.btn-back {
+background: rgba(255,255,255,0.1);
+border: none;
+color: white;
+padding: 8px 16px;
+border-radius: 12px;
+cursor: pointer;
+font-family: 'Nunito', sans-serif;
+font-weight: 700;
+font-size: 14px;
+display: flex;
+align-items: center;
+gap: 5px;
+transition: background 0.2s;
+}
+.btn-back:hover { background: rgba(255,255,255,0.25); }
+
+iframe {
 flex: 1;
 border: none;
 width: 100%;
 height: 100%;
+display: block;
 }
-
-/* NAVIGATION BAR OVER GAME */
-.game-nav {
-height: 50px;
-background: #1a1a2e;
-display: flex;
-align-items: center;
-padding: 0 20px;
-border-bottom: 1px solid var(--card-border);
-}
-
-.btn-back {
-background: transparent;
-border: 1px solid var(--card-border);
-color: white;
-padding: 5px 15px;
-border-radius: 8px;
-cursor: pointer;
-font-family: 'Nunito', sans-serif;
-font-weight: 700;
-display: flex;
-align-items: center;
-gap: 8px;
-}
-.btn-back:hover { background: rgba(255,255,255,0.1); }
 
 </style>
 </head>
@@ -161,76 +171,405 @@ gap: 8px;
 
 <div id="menu-screen">
 <div class="hub-title">ARCADE HUB</div>
-
-<div class="games-grid" id="games-grid">
-</div>
+<div class="games-grid" id="games-grid"></div>
 </div>
 
-<div id="game-container">
+<div id="game-wrapper-outer">
+<div id="game-device-frame">
 <div class="game-nav">
-<button class="btn-back" onclick="closeGame()">
-<span>←</span> BACK TO MENU
-</button>
-</div>
+<button class="btn-back" onclick="closeGame()">❮ MENU</button>
+<div style="font-weight:800; color:#4cc9f0; letter-spacing:1px;">PLAYING</div>
+<div style="width:70px;"></div> </div>
 <iframe id="game-frame"></iframe>
+</div>
 </div>
 
 <script>
-// --- 1. LIBRARY OF GAMES ---
-// Сюда ты будешь добавлять новые игры.
-// Просто добавь новый объект в этот массив.
-
-// Код твоей игры Clone Blast (сокращенно, чтобы работало)
+// === ВНУТРЕННИЙ КОД ИГРЫ (ОПТИМИЗИРОВАННЫЙ ИНТЕРФЕЙС) ===
+// Я изменил цвета сетки и добавил фон, чтобы на ПК не было черноты
 const CLONE_BLAST_SOURCE = `
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Clone Blast</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-/* ТВОЙ CSS КОД СЮДА ПОЛНОСТЬЮ */
-:root { --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); --text-main: #ffffff; --text-secondary: #a0a0a0; --accent-color: #4cc9f0; --danger-color: #f72585; }
-* { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
-body { margin: 0; padding: 0; background: var(--bg-gradient); color: var(--text-main); font-family: 'Nunito', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
-.ui-header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 15px; }
-.logo { font-size: 28px; font-weight: 900; background: linear-gradient(to right, #4cc9f0, #4361ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 15px rgba(67, 97, 238, 0.3); }
-.score-board { display: flex; gap: 15px; }
-.score-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; text-align: center; backdrop-filter: blur(10px); min-width: 80px; }
-.score-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
-.score-value { font-size: 20px; font-weight: 800; color: var(--text-main); }
-#game-wrapper { position: relative; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px var(--glass-border); }
-canvas { border-radius: 12px; display: block; cursor: grab; }
-canvas:active { cursor: grabbing; }
-#overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.85); backdrop-filter: blur(8px); border-radius: 20px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; opacity: 0; transition: opacity 0.3s ease; }
-#overlay.visible { opacity: 1; }
-#overlay h2 { font-size: 40px; margin: 0 0 10px 0; background: linear-gradient(to right, #f72585, #b5179e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.btn-restart { background: linear-gradient(45deg, #4361ee, #4cc9f0); border: none; padding: 15px 40px; font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 800; color: white; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(67, 97, 238, 0.4); transition: transform 0.1s, box-shadow 0.1s; margin-top: 20px; }
-.btn-restart:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(67, 97, 238, 0.5); }
-.btn-restart:active { transform: scale(0.95); }
+:root {
+/* Фон самой игры теперь совпадает с общей темой, но чуть темнее */
+--bg-game: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+--text: #fff;
+}
+body {
+margin: 0; padding: 0; overflow: hidden;
+background: var(--bg-game);
+font-family: 'Nunito', sans-serif;
+display: flex; flex-direction: column; align-items: center;
+height: 100vh; touch-action: none;
+justify-content: flex-start; /* Начинаем сверху */
+}
+
+/* Верхняя панель очков */
+.ui-header {
+width: 100%; padding: 15px 20px;
+display: flex; justify-content: space-between; align-items: center;
+background: rgba(0,0,0,0.2);
+border-bottom: 1px solid rgba(255,255,255,0.05);
+margin-bottom: 20px;
+}
+.logo { font-weight: 900; font-size: 22px; color: #4cc9f0; text-shadow: 0 0 10px rgba(76,201,240,0.4); }
+.scores { display: flex; gap: 10px; }
+.score-box { text-align: center; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 8px; }
+.lbl { font-size: 9px; opacity: 0.7; text-transform: uppercase; }
+.val { font-weight: 800; font-size: 18px; color: #fff; }
+
+/* Контейнер Canvas - теперь он всегда виден */
+#canvas-container {
+position: relative;
+margin: 0 auto;
+/* Тень чтобы выделить поле на фоне */
+box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+border-radius: 15px;
+background: rgba(0,0,0,0.3); /* Подложка под канвас */
+}
+
+canvas {
+display: block;
+border-radius: 12px;
+/* Убираем черные углы */
+background: transparent;
+}
+
+/* Оверлей проигрыша */
+#overlay {
+position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+background: rgba(20, 20, 35, 0.9);
+backdrop-filter: blur(5px);
+display: none; flex-direction: column; align-items: center; justify-content: center;
+border-radius: 12px; z-index: 50;
+}
+.btn { background: #4361ee; color: #fff; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 800; font-size: 16px; margin-top: 15px; cursor: pointer; }
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="ui-header">
 <div class="logo">CLONE BLAST</div>
-<div class="score-board">
-<div class="score-card"><div class="score-label">Best</div><div class="score-value" id="high-score">0</div></div>
-<div class="score-card"><div class="score-label">Score</div><div class="score-value" id="current-score">0</div></div>
+<div class="scores">
+<div class="score-box"><div class="lbl">BEST</div><div class="val" id="hs">0</div></div>
+<div class="score-box"><div class="lbl">SCORE</div><div class="val" id="cs">0</div></div>
 </div>
 </div>
-<div id="game-wrapper">
+
+<div id="canvas-container">
 <canvas id="gameCanvas"></canvas>
 <div id="overlay">
-<h2>NO MOVES!</h2>
-<div class="score-label">FINAL SCORE</div>
-<div class="score-value" id="final-score" style="font-size: 32px; margin-bottom: 10px;">0</div>
-<button class="btn-restart" onclick="restartGame()">TRY AGAIN</button>
+<h2 style="color: #f72585; margin:0; font-size: 32px;">GAME OVER</h2>
+<div class="lbl" style="margin-top:10px; color:#fff;">SCORE</div>
+<div class="val" id="fs" style="font-size:36px;">0</div>
+<button class="btn" onclick="restart()">TRY AGAIN</button>
 </div>
 </div>
+
 <script>
-/* ТВОЙ JS КОД СЮДА ПОЛНОСТЬЮ */
-const canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d',{alpha:!1});const GRID_SIZE=8,BOARD_PADDING=15,HAND_HEIGHT=180;let CELL_SIZE=0;const PALETTE=["#ff595e","#ffca3a","#8ac926","#1982c4","#6a4c93","#f15bb5","#4cc9f0"],SHAPES=[[[1]],[[1,1]],[[1],[1]],[[1,1,1]],[[1],[1],[1]],[[1,1],[1,1]],[[1,1,1],[0,1,0]],[[0,1,0],[1,1,1]],[[1,0],[1,0],[1,1]],[[0,1],[0,1],[1,1]],[[1,1],[0,1]],[[1,1],[1,0]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]]];let grid=[],hand=[],score=0,displayScore=0,highScore=localStorage.getItem('cb_highscore')||0,isGameOver=!1,comboCount=0;const scoreEl=document.getElementById('current-score'),highScoreEl=document.getElementById('high-score'),finalScoreEl=document.getElementById('final-score'),overlay=document.getElementById('overlay');let particles=[],floatingTexts=[],shakeIntensity=0,draggingShape=null,dragOffset={x:0,y:0},previewCoords=null,time=0;const AudioEngine={ctx:new(window.AudioContext||window.webkitAudioContext),play(e){if("suspended"===this.ctx.state&&this.ctx.resume(),e){const t=this.ctx.currentTime,n=this.ctx.createOscillator(),a=this.ctx.createGain();if(n.connect(a),a.connect(this.ctx.destination),"pickup"===e)n.frequency.setValueAtTime(300,t),n.frequency.exponentialRampToValueAtTime(600,t+.1),a.gain.setValueAtTime(.1,t),a.gain.linearRampToValueAtTime(0,t+.1),n.start(t),n.stop(t+.1);else if("drop"===e)n.type="triangle",n.frequency.setValueAtTime(150,t),n.frequency.exponentialRampToValueAtTime(50,t+.2),a.gain.setValueAtTime(.2,t),a.gain.linearRampToValueAtTime(0,t+.2),n.start(t),n.stop(t+.2);else if("clear"===e){[400,600,800].forEach((e,n)=>{const a=this.ctx.createOscillator(),o=this.ctx.createGain();a.type="sine",a.connect(o),o.connect(this.ctx.destination),a.frequency.value=e*(1+.2*comboCount),o.gain.setValueAtTime(.1,t),o.gain.exponentialRampToValueAtTime(.01,t+.3+.1*n),a.start(t),a.stop(t+.5)})}}}};function init(){highScoreEl.innerText=highScore,resize(),window.addEventListener('resize',resize),canvas.addEventListener('pointerdown',onDown),window.addEventListener('pointermove',onMove),window.addEventListener('pointerup',onUp),canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:!1}),restartGame(),requestAnimationFrame(loop)}function resize(){const e=Math.min(window.innerWidth-20,500);CELL_SIZE=Math.floor((e-2*BOARD_PADDING)/GRID_SIZE),canvas.width=CELL_SIZE*GRID_SIZE+2*BOARD_PADDING,canvas.height=canvas.width+HAND_HEIGHT}function restartGame(){grid=Array(GRID_SIZE).fill().map(()=>Array(GRID_SIZE).fill(null)),hand=[],score=0,displayScore=0,comboCount=0,isGameOver=!1,particles=[],floatingTexts=[],overlay.style.display='none',overlay.classList.remove('visible'),spawnHand()}function loop(){time+=.05,update(),draw(),requestAnimationFrame(loop)}function update(){displayScore<score&&(displayScore+=Math.ceil((score-displayScore)/5),scoreEl.innerText=displayScore),shakeIntensity>0&&(shakeIntensity*=.9),shakeIntensity<.5&&(shakeIntensity=0);for(let e=particles.length-1;e>=0;e--){let t=particles[e];t.x+=t.vx,t.y+=t.vy,t.vy+=.5,t.life-=.02,t.rotation+=t.rv,t.life<=0&&particles.splice(e,1)}for(let e=floatingTexts.length-1;e>=0;e--){let t=floatingTexts[e];t.y-=1.5,t.life-=.015,t.life<=0&&floatingTexts.splice(e,1)}}function spawnHand(){hand=[];const e=canvas.width/3;for(let t=0;t<3;t++){const n=SHAPES[Math.floor(Math.random()*SHAPES.length)],a=PALETTE[Math.floor(Math.random()*PALETTE.length)];hand.push({matrix:n,color:a,baseX:e*t+e/2,baseY:canvas.height-HAND_HEIGHT/2,x:e*t+e/2,y:canvas.height-HAND_HEIGHT/2,scale:.6,isPlaced:!1,targetScale:.6})}comboCount=0,checkLoss()}function onDown(e){if(isGameOver)return;const t=getPos(e);for(let n of hand)if(!n.isPlaced){const a=n.matrix[0].length*CELL_SIZE*n.scale,o=n.matrix.length*CELL_SIZE*n.scale;if(Math.abs(t.x-n.x)<a&&Math.abs(t.y-n.y)<o){draggingShape=n,n.targetScale=1,dragOffset={x:t.x-n.x,y:t.y-n.y+70},AudioEngine.play('pickup');break}}}function onMove(e){if(!draggingShape)return;const t=getPos(e);draggingShape.x=t.x-dragOffset.x,draggingShape.y=t.y-dragOffset.y,draggingShape.scale+=.3*(draggingShape.targetScale-draggingShape.scale);const n=draggingShape.matrix[0].length,a=draggingShape.matrix.length,o=Math.round((draggingShape.y-BOARD_PADDING)/CELL_SIZE-a/2),r=Math.round((draggingShape.x-BOARD_PADDING)/CELL_SIZE-n/2);canPlace(draggingShape.matrix,o,r)?previewCoords={r:o,c:r}:previewCoords=null}function onUp(e){if(draggingShape)if(previewCoords){placeShape(draggingShape,previewCoords.r,previewCoords.c),draggingShape.isPlaced=!0,draggingShape.scale=0,AudioEngine.play('drop'),checkLines(),hand.every(e=>e.isPlaced)?setTimeout(spawnHand,200):checkLoss()}else{const e=t=>{const n=t.baseX-t.x,a=t.baseY-t.y;Math.abs(n)<1&&Math.abs(a)<1?(t.x=t.baseX,t.y=t.baseY,t.scale=.6):(t.x+=.2*n,t.y+=.2*a,t.scale+=.2*(.6-t.scale),requestAnimationFrame(()=>e(t)))};e(draggingShape)}draggingShape=null,previewCoords=null}function getPos(e){const t=canvas.getBoundingClientRect();return{x:e.clientX-t.left,y:e.clientY-t.top}}function canPlace(e,t,n){for(let a=0;a<e.length;a++)for(let o=0;o<e[a].length;o++)if(e[a][o]&&(t+a<0||t+a>=GRID_SIZE||n+o<0||n+o>=GRID_SIZE||grid[t+a][n+o]))return!1;return!0}function placeShape(e,t,n){e.matrix.forEach((a,o)=>{a.forEach((a,r)=>{a&&(grid[t+o][n+r]=e.color)})}),addScore(10)}function checkLines(){const e=[],t=[];for(let n=0;n<GRID_SIZE;n++)grid[n].every(e=>e)&&e.push(n);for(let e=0;e<GRID_SIZE;e++)grid.map(t=>t[e]).every(e=>e)&&t.push(e);const n=e.length+t.length;if(n>0){comboCount++,shakeIntensity=4*n,AudioEngine.play('clear'),e.forEach(e=>{for(let t=0;t<GRID_SIZE;t++)grid[e][t]&&(createExplosion(e,t,grid[e][t]),grid[e][t]=null)}),t.forEach(t=>{for(let e=0;e<GRID_SIZE;e++)grid[e][t]&&(createExplosion(e,t,grid[e][t]),grid[e][t]=null)});let a=100*n,o=Math.floor(a*(1+.5*(n-1)+(comboCount>1?.5:0))),r=\`+\${o}\`;n>1&&(r="COMBO!"),comboCount>2&&(r="INSANE!"),spawnFloatText(r,canvas.width/2,canvas.height/2-50,n>1?40:25,"#fff"),addScore(o)}else comboCount=0}function createExplosion(e,t,n){const a=BOARD_PADDING+t*CELL_SIZE+CELL_SIZE/2,o=BOARD_PADDING+e*CELL_SIZE+CELL_SIZE/2;for(let e=0;e<4;e++)particles.push({x:a,y:o,vx:12*(Math.random()-.5),vy:12*(Math.random()-.5),life:1,color:n,size:CELL_SIZE/2*Math.random(),rotation:Math.random()*Math.PI,rv:.2*(Math.random()-.5)})}function spawnFloatText(e,t,n,a,o){floatingTexts.push({text:e,x:t,y:n,size:a,color:o,life:1})}function addScore(e){score+=e,score>highScore&&(highScore=score,localStorage.setItem('cb_highscore',highScore),highScoreEl.innerText=highScore)}function checkLoss(){const e=hand.filter(e=>!e.isPlaced);if(0===e.length)return;let t=!1;for(let n of e){for(let a=-2;a<GRID_SIZE;a++){for(let o=-2;o<GRID_SIZE;o++)if(canPlace(n.matrix,a,o)){t=!0;break}if(t)break}if(t)break}t||(isGameOver=!0,setTimeout(()=>{finalScoreEl.innerText=score,overlay.style.display='flex',requestAnimationFrame(()=>overlay.classList.add('visible'))},500))}function draw(){ctx.fillStyle='#1e1e2e',ctx.clearRect(0,0,canvas.width,canvas.height),ctx.save(),shakeIntensity>.5&&(ctx.translate((Math.random()-.5)*shakeIntensity,(Math.random()-.5)*shakeIntensity)),drawGridBg();for(let e=0;e<GRID_SIZE;e++)for(let t=0;t<GRID_SIZE;t++)grid[e][t]&&drawBlock(e,t,grid[e][t]);if(previewCoords&&draggingShape){ctx.globalAlpha=.2,draggingShape.matrix.forEach((e,t)=>{e.forEach((e,n)=>{e&&drawBlock(previewCoords.r+t,previewCoords.c+n,draggingShape.color,!0)})}),ctx.globalAlpha=1}hand.forEach(e=>{e.isPlaced||drawShape(e)}),particles.forEach(e=>{ctx.save(),ctx.translate(e.x,e.y),ctx.rotate(e.rotation),ctx.globalAlpha=e.life,ctx.fillStyle=e.color,ctx.fillRect(-e.size/2,-e.size/2,e.size,e.size),ctx.restore()}),floatingTexts.forEach(e=>{ctx.globalAlpha=Math.max(0,e.life),ctx.fillStyle=e.color,ctx.font=\`900 \${e.size}px 'Nunito'\`,ctx.textAlign='center',ctx.strokeStyle='black',ctx.lineWidth=3,ctx.strokeText(e.text,e.x,e.y),ctx.fillText(e.text,e.x,e.y),ctx.globalAlpha=1}),ctx.restore()}function drawGridBg(){for(let e=0;e<GRID_SIZE;e++)for(let t=0;t<GRID_SIZE;t++){const n=BOARD_PADDING+t*CELL_SIZE,a=BOARD_PADDING+e*CELL_SIZE,o=CELL_SIZE-4;ctx.fillStyle="rgba(0,0,0,0.3)",roundRect(n+2,a+2,o,o,6),ctx.fill()}}function drawBlock(e,t,n,a){const o=BOARD_PADDING+t*CELL_SIZE,r=BOARD_PADDING+e*CELL_SIZE,i=CELL_SIZE-2;if(a)return ctx.fillStyle="#ffffff",roundRect(o+1,r+1,i,i,8),void ctx.fill();ctx.fillStyle=n,ctx.shadowColor=n,ctx.shadowBlur=10,roundRect(o+1,r+1,i,i,8),ctx.fill(),ctx.shadowBlur=0,ctx.fillStyle="rgba(255,255,255,0.3)",ctx.beginPath(),ctx.moveTo(o+1,r+1+i),ctx.lineTo(o+1,r+1),ctx.lineTo(o+1+i,r+1),ctx.lineTo(o+1+i-4,r+1+4),ctx.lineTo(o+1+4,r+1+4),ctx.lineTo(o+1+4,r+1+i-4),ctx.closePath(),ctx.fill()}function drawShape(e){const t=CELL_SIZE*e.scale,n=e.matrix[0].length*t,a=e.matrix.length*t,o=e.x-n/2,r=e.y-a/2;e.matrix.forEach((n,a)=>{n.forEach((n,i)=>{if(n){const l=o+i*t,s=r+a*t;ctx.fillStyle=e.color,e===draggingShape&&(ctx.shadowColor=e.color,ctx.shadowBlur=20),roundRect(l+1,s+1,t-2,t-2,6),ctx.fill(),ctx.shadowBlur=0,ctx.fillStyle="rgba(255,255,255,0.4)",ctx.beginPath(),ctx.arc(l+.25*t,s+.25*t,.1*t,0,2*Math.PI),ctx.fill()}})}) }function roundRect(e,t,n,a,o){ctx.beginPath(),ctx.moveTo(e+o,t),ctx.lineTo(e+n-o,t),ctx.quadraticCurveTo(e+n,t,e+n,t+o),ctx.lineTo(e+n,t+a-o),ctx.quadraticCurveTo(e+n,t+a,e+n-o,t+a),ctx.lineTo(e+o,t+a),ctx.quadraticCurveTo(e,t+a,e,t+a-o),ctx.lineTo(e,t+o),ctx.quadraticCurveTo(e,t,e+o,t),ctx.closePath()}init();
+// --- GAME LOGIC ---
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d', { alpha: false }); // Optimization
+
+// Настройки размеров
+const GRID = 8;
+let CELL = 0;
+const HAND_H = 160;
+let PADDING = 12;
+
+// Цвета
+const COLORS = ["#ff595e","#ffca3a","#8ac926","#1982c4","#6a4c93","#f15bb5","#4cc9f0"];
+// Формы
+const SHAPES=[[[1]],[[1,1]],[[1],[1]],[[1,1,1]],[[1],[1],[1]],[[1,1],[1,1]],[[1,1,1],[0,1,0]],[[0,1,0],[1,1,1]],[[1,0],[1,0],[1,1]],[[0,1],[0,1],[1,1]],[[1,1],[0,1]],[[1,1],[1,0]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]]];
+
+let grid=[], hand=[], score=0, hs=localStorage.getItem('cb_hs')||0, over=false;
+let dragShape=null, dragOff={x:0,y:0}, preview=null;
+
+// UI
+const elCS=document.getElementById('cs'), elHS=document.getElementById('hs'), elFS=document.getElementById('fs'), elOv=document.getElementById('overlay');
+
+// Init
+function init() {
+elHS.innerText = hs;
+resize();
+window.addEventListener('resize', resize);
+
+// Input Listeners
+canvas.addEventListener('pointerdown', down);
+window.addEventListener('pointermove', move);
+window.addEventListener('pointerup', up);
+
+restart();
+loop();
+}
+
+function resize() {
+// Рассчитываем ширину так, чтобы она влезала в iframe
+const maxW = Math.min(window.innerWidth - 20, 450); // Чуть уже для красоты
+CELL = Math.floor((maxW - PADDING*2) / GRID);
+
+canvas.width = CELL * GRID + PADDING * 2;
+canvas.height = canvas.width + HAND_H; // Квадратное поле + место для руки снизу
+
+// Обновляем позиции руки, если ресайз во время игры
+if(hand.length) hand.forEach((s, i) => {
+if(!s.placed && !s.drag) {
+s.baseX = canvas.width/3 * i + canvas.width/6;
+s.baseY = canvas.height - HAND_H/2;
+s.x = s.baseX; s.y = s.baseY;
+}
+});
+}
+
+function restart() {
+grid = Array(GRID).fill().map(()=>Array(GRID).fill(null));
+hand=[]; score=0; over=false;
+elCS.innerText=0;
+elOv.style.display='none';
+spawn();
+}
+
+function spawn() {
+hand = [];
+const slot = canvas.width / 3;
+for(let i=0; i<3; i++) {
+hand.push({
+m: SHAPES[Math.floor(Math.random()*SHAPES.length)],
+c: COLORS[Math.floor(Math.random()*COLORS.length)],
+baseX: slot*i + slot/2,
+baseY: canvas.height - HAND_H/2,
+x: slot*i + slot/2, y: canvas.height - HAND_H/2,
+s: 0.6, placed: false
+});
+}
+checkLoss();
+}
+
+// --- INPUT ---
+function getPos(e) {
+const r = canvas.getBoundingClientRect();
+// Важно: учитываем масштаб canvas через CSS если он есть
+const scaleX = canvas.width / r.width;
+const scaleY = canvas.height / r.height;
+return {
+x: (e.clientX - r.left) * scaleX,
+y: (e.clientY - r.top) * scaleY
+};
+}
+
+function down(e) {
+if(over) return;
+const p = getPos(e);
+for(let s of hand) {
+if(s.placed) continue;
+// Простая проверка хитбокса
+let hw = (s.m[0].length * CELL * s.s)/2 + 20; // +20 запас для пальца
+let hh = (s.m.length * CELL * s.s)/2 + 20;
+if(Math.abs(p.x - s.x) < hw && Math.abs(p.y - s.y) < hh) {
+dragShape = s;
+dragShape.drag = true;
+// Смещаем фигуру чуть выше пальца, чтобы видеть её
+dragOff = { x: p.x - s.x, y: p.y - s.y + 60 };
+s.ts = 1.0; // Target Scale
+break;
+}
+}
+}
+
+function move(e) {
+if(!dragShape) return;
+const p = getPos(e);
+dragShape.x = p.x - dragOff.x;
+dragShape.y = p.y - dragOff.y;
+
+// Preview
+const mx = dragShape.m[0].length;
+const my = dragShape.m.length;
+const r = Math.round((dragShape.y - PADDING)/CELL - my/2);
+const c = Math.round((dragShape.x - PADDING)/CELL - mx/2);
+
+if(canPlace(dragShape.m, r, c)) preview = {r,c};
+else preview = null;
+}
+
+function up(e) {
+if(!dragShape) return;
+if(preview) {
+place(dragShape, preview.r, preview.c);
+dragShape.placed = true;
+dragShape.s = 0;
+checkLines();
+if(hand.every(s=>s.placed)) setTimeout(spawn, 200);
+else checkLoss();
+} else {
+// Возврат на место
+animateBack(dragShape);
+}
+dragShape = null; preview = null;
+}
+
+function animateBack(s) {
+s.drag = false;
+let steps = 10;
+let dx = (s.baseX - s.x)/steps;
+let dy = (s.baseY - s.y)/steps;
+function anim() {
+if(s.drag || s.placed) return;
+s.x += dx; s.y += dy;
+s.s += (0.6 - s.s) * 0.2;
+if(--steps > 0) requestAnimationFrame(anim);
+else { s.x=s.baseX; s.y=s.baseY; s.s=0.6; }
+}
+anim();
+}
+
+// --- CORE ---
+function canPlace(m, r, c) {
+for(let y=0; y<m.length; y++)
+for(let x=0; x<m[y].length; x++)
+if(m[y][x]) {
+if(r+y<0 || r+y>=GRID || c+x<0 || c+x>=GRID || grid[r+y][c+x]) return false;
+}
+return true;
+}
+
+function place(s, r, c) {
+s.m.forEach((row, dy) => row.forEach((v, dx) => {
+if(v) grid[r+dy][c+dx] = s.c;
+}));
+score += 10; updateScore();
+}
+
+function checkLines() {
+let rows=[], cols=[];
+for(let r=0; r<GRID; r++) if(grid[r].every(x=>x)) rows.push(r);
+for(let c=0; c<GRID; c++) if(grid.map(r=>r[c]).every(x=>x)) cols.push(c);
+
+if(rows.length + cols.length > 0) {
+rows.forEach(r => grid[r].fill(null));
+cols.forEach(c => { for(let r=0; r<GRID; r++) grid[r][c]=null; });
+score += (rows.length + cols.length) * 100;
+updateScore();
+}
+}
+
+function checkLoss() {
+const active = hand.filter(s=>!s.placed);
+if(!active.length) return;
+let possible = false;
+for(let s of active) {
+for(let r=-2; r<GRID; r++) {
+for(let c=-2; c<GRID; c++) {
+if(canPlace(s.m, r, c)) { possible=true; break; }
+}
+if(possible) break;
+}
+}
+if(!possible) {
+over = true;
+elFS.innerText = score;
+elOv.style.display = 'flex';
+}
+}
+
+function updateScore() {
+elCS.innerText = score;
+if(score > hs) { hs = score; localStorage.setItem('cb_hs', hs); elHS.innerText = hs; }
+}
+
+// --- DRAW ---
+function loop() {
+// Фон канваса (не прозрачный!)
+ctx.fillStyle = "#1a1a2e";
+ctx.fillRect(0,0, canvas.width, canvas.height);
+
+drawGrid();
+
+// Блоки на поле
+for(let r=0; r<GRID; r++)
+for(let c=0; c<GRID; c++)
+if(grid[r][c]) drawBlock(r, c, grid[r][c]);
+
+// Призрак (куда упадет)
+if(preview && dragShape) {
+ctx.globalAlpha = 0.3;
+dragShape.m.forEach((row, dy) => row.forEach((v, dx) => {
+if(v) drawBlock(preview.r+dy, preview.c+dx, "#fff");
+}));
+ctx.globalAlpha = 1.0;
+}
+
+// Рука
+hand.forEach(s => {
+if(!s.placed) {
+// Lerp scale
+if(s.drag) s.s += (1.0 - s.s)*0.2;
+drawShape(s);
+}
+});
+
+requestAnimationFrame(loop);
+}
+
+function drawGrid() {
+// Рисуем подложки для ячеек, чтобы было видно сетку
+for(let r=0; r<GRID; r++)
+for(let c=0; c<GRID; c++) {
+const x = PADDING + c * CELL;
+const y = PADDING + r * CELL;
+const s = CELL - 4;
+// Светлый полупрозрачный фон для пустых ячеек
+ctx.fillStyle = "rgba(255,255,255,0.06)";
+roundRect(x+2, y+2, s, s, 6);
+ctx.fill();
+}
+}
+
+function drawBlock(r, c, color) {
+const x = PADDING + c * CELL;
+const y = PADDING + r * CELL;
+const s = CELL - 2;
+ctx.fillStyle = color;
+roundRect(x+1, y+1, s, s, 8);
+ctx.fill();
+// Блик
+ctx.fillStyle = "rgba(255,255,255,0.3)";
+ctx.beginPath();
+ctx.arc(x+s*0.25, y+s*0.25, s*0.15, 0, Math.PI*2);
+ctx.fill();
+}
+
+function drawShape(s) {
+const cs = CELL * s.s;
+const w = s.m[0].length * cs;
+const h = s.m.length * cs;
+const cx = s.x - w/2;
+const cy = s.y - h/2;
+
+s.m.forEach((row, r) => row.forEach((v, c) => {
+if(v) {
+ctx.fillStyle = s.c;
+if(s.drag) { ctx.shadowColor=s.c; ctx.shadowBlur=15; }
+roundRect(cx + c*cs + 1, cy + r*cs + 1, cs-2, cs-2, 6);
+ctx.fill();
+ctx.shadowBlur=0;
+}
+}));
+}
+
+function roundRect(x,y,w,h,r) {
+ctx.beginPath(); ctx.moveTo(x+r, y); ctx.lineTo(x+w-r, y);
+ctx.quadraticCurveTo(x+w, y, x+w, y+r); ctx.lineTo(x+w, y+h-r);
+ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h); ctx.lineTo(x+r, y+h);
+ctx.quadraticCurveTo(x, y+h, x, y+h-r); ctx.lineTo(x, y+r);
+ctx.quadraticCurveTo(x, y, x+r, y); ctx.closePath();
+}
+
+init();
 <\/script>
 </body>
 </html>
@@ -240,71 +579,59 @@ const GAMES_LIBRARY = [
 {
 id: 'cloneblast',
 title: 'Clone Blast: Ultimate',
-description: 'Блочная головоломка. Перетаскивай фигуры, собирай линии!',
-icon: '🧩', // Можно заменить на картинку
+description: 'Классическая блочная головоломка. Полностью обновленный дизайн!',
+icon: '🧩',
 source: CLONE_BLAST_SOURCE
 },
 {
-id: 'coming-soon',
+id: 'soon',
 title: 'Coming Soon',
-description: 'Новая игра в разработке...',
+description: 'Новые игры в разработке...',
 icon: '🚀',
 isPlaceholder: true
 }
 ];
 
-// --- 2. RENDER MENU ---
+// --- RENDER MENU ---
 const grid = document.getElementById('games-grid');
-
-function renderMenu() {
-grid.innerHTML = '';
 GAMES_LIBRARY.forEach(game => {
 const card = document.createElement('div');
-card.className = `game-card ${game.isPlaceholder ? 'soon' : ''}`;
-
-if (!game.isPlaceholder) {
-card.onclick = () => launchGame(game.id);
-}
+card.className = 'game-card';
+if(game.isPlaceholder) card.style.opacity = '0.5';
 
 card.innerHTML = `
 <div class="game-icon">${game.icon}</div>
 <div class="game-title">${game.title}</div>
 <div class="game-desc">${game.description}</div>
-<button class="btn-play">${game.isPlaceholder ? 'Locked' : 'PLAY'}</button>
+<button class="btn-play">${game.isPlaceholder ? 'LOCKED' : 'PLAY'}</button>
 `;
+
+if(!game.isPlaceholder) {
+card.onclick = () => launchGame(game.id);
+}
 grid.appendChild(card);
 });
-}
 
-// --- 3. GAME LAUNCHER LOGIC ---
+// --- GAME LAUNCHER ---
 const menuScreen = document.getElementById('menu-screen');
-const gameContainer = document.getElementById('game-container');
+const gameWrapper = document.getElementById('game-wrapper-outer');
 const gameFrame = document.getElementById('game-frame');
 
 function launchGame(id) {
 const game = GAMES_LIBRARY.find(g => g.id === id);
-if (!game) return;
+if(!game) return;
 
-// UI Transition
-menuScreen.style.display = 'none';
-gameContainer.style.display = 'flex';
+// Скрываем скролл на body, чтобы не дергалось
+document.body.style.overflow = 'hidden';
 
-// Inject the game code into the iframe
-// We use 'srcdoc' to render the HTML string directly
 gameFrame.srcdoc = game.source;
+gameWrapper.style.display = 'flex'; // Flex центрирует "телефон" на экране ПК
 }
 
 function closeGame() {
-// UI Transition
-gameContainer.style.display = 'none';
-menuScreen.style.display = 'flex';
-
-// IMPORTANT: Clear the iframe to stop the game loop and sounds completely
 gameFrame.srcdoc = "";
+gameWrapper.style.display = 'none';
 }
-
-// Init
-renderMenu();
 
 </script>
 </body>
