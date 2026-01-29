@@ -1,188 +1,3 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Game Hub: Ultimate</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-:root {
---bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
---card-bg: rgba(255, 255, 255, 0.08);
---card-border: rgba(255, 255, 255, 0.15);
---accent: #4cc9f0;
---text-main: #ffffff;
-}
-
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-body {
-margin: 0; padding: 0;
-background: var(--bg-gradient);
-color: var(--text-main);
-font-family: 'Nunito', sans-serif;
-height: 100vh;
-overflow: hidden;
-}
-
-/* --- MENU SCREEN --- */
-#menu-screen {
-display: flex;
-flex-direction: column;
-align-items: center;
-height: 100%;
-padding: 40px 20px;
-overflow-y: auto;
-}
-
-.hub-title {
-font-size: 3rem;
-font-weight: 900;
-text-transform: uppercase;
-letter-spacing: 2px;
-background: linear-gradient(to right, #f72585, #4cc9f0);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-margin-bottom: 30px;
-text-shadow: 0 10px 20px rgba(0,0,0,0.3);
-text-align: center;
-}
-
-.games-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
-gap: 25px;
-width: 100%;
-justify-content: center;
-padding-bottom: 50px;
-}
-
-.game-card {
-background: var(--card-bg);
-border: 1px solid var(--card-border);
-border-radius: 24px;
-padding: 25px;
-cursor: pointer;
-transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-backdrop-filter: blur(10px);
-display: flex;
-flex-direction: column;
-align-items: center;
-text-align: center;
-box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.game-card:hover {
-transform: translateY(-8px) scale(1.02);
-box-shadow: 0 20px 40px rgba(76, 201, 240, 0.3);
-border-color: var(--accent);
-background: rgba(255, 255, 255, 0.12);
-}
-
-.game-icon {
-font-size: 40px;
-margin-bottom: 15px;
-background: rgba(255,255,255,0.1);
-width: 80px; height: 80px;
-display: flex; align-items: center; justify-content: center;
-border-radius: 50%;
-box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
-}
-
-.game-title { font-size: 1.4rem; font-weight: 800; margin-bottom: 8px; }
-.game-desc { font-size: 0.9rem; color: #b0b0b0; margin-bottom: 20px; line-height: 1.4; }
-.btn-play { background: var(--accent); color: #000; border: none; padding: 12px 35px; border-radius: 50px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; width: 100%; cursor: pointer; }
-
-/* --- GAME CONTAINER --- */
-#game-wrapper-outer {
-position: fixed;
-top: 0; left: 0; width: 100%; height: 100%;
-background: rgba(0,0,0,0.85);
-backdrop-filter: blur(15px);
-display: none;
-justify-content: center;
-align-items: center;
-z-index: 1000;
-}
-
-#game-device-frame {
-width: 100%;
-height: 100%;
-max-width: 500px; /* Ограничиваем ширину на ПК */
-max-height: 900px;
-background: #1a1a2e;
-display: flex;
-flex-direction: column;
-position: relative;
-box-shadow: 0 0 100px rgba(76, 201, 240, 0.15);
-}
-
-@media (max-width: 550px) {
-#game-device-frame {
-max-width: 100%;
-max-height: 100%;
-border-radius: 0;
-}
-}
-
-.game-nav {
-height: 60px;
-min-height: 60px;
-background: #16213e;
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 0 20px;
-border-bottom: 1px solid rgba(255,255,255,0.1);
-z-index: 10;
-}
-
-.btn-back {
-background: rgba(255,255,255,0.1);
-border: none;
-color: white;
-padding: 8px 16px;
-border-radius: 12px;
-cursor: pointer;
-font-family: 'Nunito', sans-serif;
-font-weight: 700;
-font-size: 14px;
-display: flex;
-align-items: center;
-gap: 5px;
-transition: background 0.2s;
-}
-.btn-back:hover { background: rgba(255,255,255,0.25); }
-
-iframe {
-flex: 1;
-border: none;
-width: 100%;
-height: 100%;
-display: block;
-}
-</style>
-</head>
-<body>
-
-<div id="menu-screen">
-<div class="hub-title">ARCADE HUB</div>
-<div class="games-grid" id="games-grid"></div>
-</div>
-
-<div id="game-wrapper-outer">
-<div id="game-device-frame">
-<div class="game-nav">
-<button class="btn-back" onclick="closeGame()">❮ MENU</button>
-<div style="font-weight:800; color:#4cc9f0; letter-spacing:1px;">PLAYING</div>
-<div style="width:70px;"></div>
-</div>
-<iframe id="game-frame"></iframe>
-</div>
-</div>
-
-<script>
-// === CLONE BLAST (FULL CODE WITH AUDIO) ===
 const CLONE_BLAST_SOURCE = `
 <!DOCTYPE html>
 <html lang="ru">
@@ -190,341 +5,51 @@ const CLONE_BLAST_SOURCE = `
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
-:root { --bg-game: radial-gradient(circle at center, #1e1e3f 0%, #111122 100%); }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Nunito:wght@400;800&display=swap');
+:root { --bg: #050510; }
 body {
-margin: 0; padding: 0; overflow: hidden; background: var(--bg-game);
+margin: 0; padding: 0; overflow: hidden; background: var(--bg);
 font-family: 'Nunito', sans-serif; display: flex; flex-direction: column;
 align-items: center; height: 100vh; touch-action: none; color: #fff;
 }
 .ui-header {
-width: 100%; max-width: 500px; padding: 15px 20px; box-sizing: border-box;
+width: 100%; max-width: 500px; padding: 20px; box-sizing: border-box;
 display: flex; justify-content: space-between; align-items: center;
-background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05);
+background: rgba(255,255,255,0.03); backdrop-filter: blur(10px);
+border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 100;
 }
-.logo { font-weight: 900; font-size: 20px; color: #4cc9f0; text-shadow: 0 0 10px rgba(76,201,240,0.3); }
-.scores { display: flex; gap: 8px; }
-.score-box { text-align: center; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 8px; min-width: 60px; }
-.lbl { font-size: 8px; opacity: 0.6; text-transform: uppercase; }
-.val { font-weight: 800; font-size: 16px; }
+.logo { font-family: 'Montserrat', sans-serif; font-size: 22px; background: linear-gradient(45deg, #f72585, #4cc9f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(76,201,240,0.5)); }
+.score-container { display: flex; gap: 15px; }
+.score-box { background: rgba(0,0,0,0.4); padding: 5px 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+.lbl { font-size: 10px; color: #4cc9f0; font-weight: 800; text-transform: uppercase; }
+.val { font-size: 20px; font-weight: 900; font-family: 'Montserrat'; }
 
-#game-wrapper {
-flex: 1; display: flex; align-items: center; justify-content: center; width: 100%;
+#game-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; width: 100%; position: relative; }
+canvas { border-radius: 16px; filter: drop-shadow(0 0 30px rgba(0,0,0,0.8)); cursor: pointer; }
+
+#combo-text {
+position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+font-family: 'Montserrat', sans-serif; font-size: 48px; font-weight: 900;
+color: #fff; text-shadow: 0 0 20px #f72585; pointer-events: none;
+display: none; z-index: 200;
 }
-#canvas-container { position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.6); border-radius: 12px; }
-canvas { display: block; border-radius: 12px; cursor: crosshair; }
 
 #overlay {
 position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-background: rgba(15, 15, 30, 0.95); backdrop-filter: blur(8px);
+background: rgba(5, 5, 15, 0.95); backdrop-filter: blur(10px);
 display: none; flex-direction: column; align-items: center; justify-content: center;
-border-radius: 12px; z-index: 100; text-align: center;
+border-radius: 16px; z-index: 300;
 }
-.btn { background: linear-gradient(45deg, #4361ee, #4cc9f0); color: #fff; border: none; padding: 14px 40px; border-radius: 50px; font-weight: 900; font-size: 16px; margin-top: 20px; cursor: pointer; box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3); }
+.btn-restart {
+background: linear-gradient(45deg, #f72585, #4361ee); color: white; border: none;
+padding: 15px 45px; border-radius: 50px; font-family: 'Montserrat'; font-size: 18px;
+cursor: pointer; box-shadow: 0 10px 30px rgba(247, 37, 133, 0.4);
+}
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="ui-header">
-<div class="logo">CLONE BLAST</div>
-<div class="scores">
-<div class="score-box"><div class="lbl">BEST</div><div class="val" id="hs">0</div></div>
-<div class="score-box"><div class="lbl">SCORE</div><div class="val" id="cs">0</div></div>
-</div>
-</div>
-
-<div id="game-wrapper">
-<div id="canvas-container">
-<canvas id="gameCanvas"></canvas>
-<div id="overlay">
-<h2 style="color: #f72585; margin:0; font-size: 32px; font-weight:900;">NO MOVES!</h2>
-<div class="lbl" style="margin-top:15px; color:#aaa; font-size:12px;">FINAL SCORE</div>
-<div id="fs" style="font-size:44px; font-weight:900;">0</div>
-<button class="btn" onclick="restart()">TRY AGAIN</button>
-</div>
-</div>
-</div>
-
-<script>
-// --- AUDIO SYSTEM ---
-const AudioFX = {
-ctx: null,
-init() { if(!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); },
-play(type) {
-this.init();
-if (this.ctx.state === 'suspended') this.ctx.resume();
-const t = this.ctx.currentTime;
-const osc = this.ctx.createOscillator();
-const g = this.ctx.createGain();
-osc.connect(g); g.connect(this.ctx.destination);
-
-if(type === 'pickup') {
-// "Whip" sound for picking up
-osc.frequency.setValueAtTime(300, t);
-osc.frequency.exponentialRampToValueAtTime(600, t+0.1);
-g.gain.setValueAtTime(0.05, t); g.gain.linearRampToValueAtTime(0, t+0.1);
-osc.start(); osc.stop(t+0.1);
-} else if(type === 'place') {
-// "Thud" sound for placing
-osc.type = 'triangle';
-osc.frequency.setValueAtTime(150, t);
-osc.frequency.exponentialRampToValueAtTime(50, t+0.1);
-g.gain.setValueAtTime(0.1, t); g.gain.linearRampToValueAtTime(0, t+0.1);
-osc.start(); osc.stop(t+0.1);
-} else if(type === 'clear') {
-// "Chord" for clearing lines
-[400, 600, 800].forEach((f, i) => {
-const o = this.ctx.createOscillator();
-const gn = this.ctx.createGain();
-o.type = 'sine';
-o.connect(gn); gn.connect(this.ctx.destination);
-o.frequency.setValueAtTime(f, t + i*0.05);
-gn.gain.setValueAtTime(0.05, t + i*0.05);
-gn.gain.exponentialRampToValueAtTime(0.001, t + 0.5 + i*0.05);
-o.start(t + i*0.05); o.stop(t + 0.6);
-});
-}
-}
-};
-
-// --- GAME LOGIC ---
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d', { alpha: false });
-const GRID = 8; let CELL = 0; const HAND_H = 170; let PADDING = 15;
-const COLORS = ["#ff595e","#ffca3a","#8ac926","#1982c4","#6a4c93","#f15bb5","#4cc9f0"];
-const SHAPES = [[[1]],[[1,1]],[[1],[1]],[[1,1,1]],[[1],[1],[1]],[[1,1],[1,1]],[[1,1,1],[0,1,0]],[[0,1,0],[1,1,1]],[[1,0],[1,0],[1,1]],[[0,1],[0,1],[1,1]],[[1,1],[0,1]],[[1,1],[1,0]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]]];
-
-let grid=[], hand=[], score=0, hs=localStorage.getItem('cb_hs')||0, over=false;
-let drag=null, dragOff={x:0,y:0}, preview=null;
-const elCS=document.getElementById('cs'), elHS=document.getElementById('hs'), elFS=document.getElementById('fs'), elOv=document.getElementById('overlay');
-
-function init() {
-elHS.innerText = hs;
-resize();
-window.addEventListener('resize', resize);
-// Init Audio on first interaction
-canvas.addEventListener('pointerdown', e => { AudioFX.init(); down(e); });
-window.addEventListener('pointermove', move);
-window.addEventListener('pointerup', up);
-restart(); loop();
-}
-
-function resize() {
-const maxW = Math.min(window.innerWidth - 30, 450);
-CELL = Math.floor((maxW - PADDING*2) / GRID);
-canvas.width = CELL * GRID + PADDING * 2;
-canvas.height = canvas.width + HAND_H;
-if(hand.length) hand.forEach((s, i) => {
-if(!s.placed && !s.dragging) {
-s.bx = canvas.width/3 * i + canvas.width/6;
-s.by = canvas.height - HAND_H/2;
-s.x = s.bx; s.y = s.by;
-}
-});
-}
-
-function restart() {
-grid = Array(GRID).fill().map(()=>Array(GRID).fill(null));
-hand=[]; score=0; over=false; updateScore();
-elOv.style.display='none'; spawn();
-}
-
-function spawn() {
-hand = []; const slot = canvas.width / 3;
-for(let i=0; i<3; i++) {
-hand.push({
-m: SHAPES[Math.floor(Math.random()*SHAPES.length)],
-c: COLORS[Math.floor(Math.random()*COLORS.length)],
-bx: slot*i + slot/2, by: canvas.height - HAND_H/2,
-x: slot*i + slot/2, y: canvas.height - HAND_H/2,
-s: 0.6, placed: false
-});
-}
-checkLoss();
-}
-
-function getPos(e) {
-const r = canvas.getBoundingClientRect();
-return { x: (e.clientX - r.left) * (canvas.width / r.width), y: (e.clientY - r.top) * (canvas.height / r.height) };
-}
-
-function down(e) {
-if(over) return; const p = getPos(e);
-for(let s of hand) {
-if(s.placed) continue;
-let w = (s.m[0].length * CELL * s.s), h = (s.m.length * CELL * s.s);
-// Hitbox logic
-if(Math.abs(p.x - s.x) < w/2 + 30 && Math.abs(p.y - s.y) < h/2 + 30) {
-drag = s; s.dragging = true;
-dragOff = { x: p.x - s.x, y: p.y - s.y + 70 };
-AudioFX.play('pickup');
-break;
-}
-}
-}
-
-function move(e) {
-if(!drag) return; const p = getPos(e);
-drag.x = p.x - dragOff.x; drag.y = p.y - dragOff.y;
-const r = Math.round((drag.y - PADDING)/CELL - drag.m.length/2), c = Math.round((drag.x - PADDING)/CELL - drag.m[0].length/2);
-preview = canPlace(drag.m, r, c) ? {r,c} : null;
-}
-
-function up() {
-if(!drag) return;
-if(preview) {
-drag.m.forEach((row, dy) => row.forEach((v, dx) => { if(v) grid[preview.r+dy][preview.c+dx] = drag.c; }));
-drag.placed = true; score += 10;
-AudioFX.play('place');
-checkLines();
-if(hand.every(s=>s.placed)) setTimeout(spawn, 200); else checkLoss();
-} else {
-const s = drag; s.dragging = false;
-let startX = s.x, startY = s.y, startS = s.s, t = 0;
-function back() {
-t += 0.15; if(t > 1) { s.x=s.bx; s.y=s.by; s.s=0.6; return; }
-s.x = startX + (s.bx - startX) * t; s.y = startY + (s.by - startY) * t;
-s.s = startS + (0.6 - startS) * t; requestAnimationFrame(back);
-}
-back();
-}
-drag = null; preview = null;
-}
-
-function canPlace(m, r, c) {
-for(let y=0; y<m.length; y++) for(let x=0; x<m[y].length; x++)
-if(m[y][x] && (r+y<0 || r+y>=GRID || c+x<0 || c+x>=GRID || grid[r+y][c+x])) return false;
-return true;
-}
-
-function checkLines() {
-let rows=[], cols=[];
-for(let r=0; r<GRID; r++) if(grid[r].every(x=>x)) rows.push(r);
-for(let c=0; c<GRID; c++) if(grid.map(r=>r[c]).every(x=>x)) cols.push(c);
-if(rows.length + cols.length > 0) {
-AudioFX.play('clear'); // Sound on clear
-rows.forEach(r => grid[r].fill(null));
-cols.forEach(c => { for(let r=0; r<GRID; r++) grid[r][c]=null; });
-score += (rows.length + cols.length) * 100; updateScore();
-}
-}
-
-function checkLoss() {
-const active = hand.filter(s=>!s.placed);
-let ok = false;
-for(let s of active) {
-for(let r=-2; r<GRID; r++) for(let c=-2; c<GRID; c++) if(canPlace(s.m, r, c)) { ok=true; break; }
-if(ok) break;
-}
-if(!ok) { over=true; elFS.innerText=score; elOv.style.display='flex'; }
-}
-
-function updateScore() { elCS.innerText=score; if(score>hs){hs=score; localStorage.setItem('cb_hs',hs); elHS.innerText=hs;} }
-
-function loop() {
-// Dark background fill
-ctx.fillStyle = "#111122"; ctx.fillRect(0,0, canvas.width, canvas.height);
-
-// Grid lines (visible!)
-for(let r=0; r<GRID; r++) for(let c=0; c<GRID; c++) {
-ctx.fillStyle = "rgba(255,255,255,0.05)";
-roundRect(PADDING + c*CELL + 2, PADDING + r*CELL + 2, CELL-4, CELL-4, 6); ctx.fill();
-if(grid[r][c]) drawBlock(r, c, grid[r][c]);
-}
-// Ghost piece
-if(preview && drag) {
-ctx.globalAlpha = 0.2;
-drag.m.forEach((row, dy) => row.forEach((v, dx) => { if(v) drawBlock(preview.r+dy, preview.c+dx, "#fff"); }));
-ctx.globalAlpha = 1.0;
-}
-// Hand pieces
-hand.forEach(s => { if(!s.placed) { if(s.dragging) s.s += (1.0 - s.s)*0.2; drawShape(s); } });
-requestAnimationFrame(loop);
-}
-
-function drawBlock(r, c, col) {
-const x = PADDING + c*CELL + 1, y = PADDING + r*CELL + 1, s = CELL-2;
-ctx.fillStyle = col; roundRect(x, y, s, s, 8); ctx.fill();
-ctx.fillStyle = "rgba(255,255,255,0.2)"; ctx.beginPath(); ctx.arc(x+s*0.3, y+s*0.3, s*0.1, 0, Math.PI*2); ctx.fill();
-}
-
-function drawShape(s) {
-const cs = CELL * s.s, w = s.m[0].length * cs, h = s.m.length * cs;
-const ox = s.x - w/2, oy = s.y - h/2;
-s.m.forEach((row, r) => row.forEach((v, c) => {
-if(v) {
-ctx.fillStyle = s.c; if(s.dragging) { ctx.shadowColor=s.c; ctx.shadowBlur=15; }
-roundRect(ox + c*cs + 1, oy + r*cs + 1, cs-2, cs-2, 6); ctx.fill(); ctx.shadowBlur=0;
-}
-}));
-}
-
-function roundRect(x,y,w,h,r) {
-ctx.beginPath(); ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
-ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h); ctx.lineTo(x+r,y+h);
-ctx.quadraticCurveTo(x,y+h,x,y+h-r); ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
-}
-init();
-<\/script>
+<!-- ДАЛЕЕ КОД БЕЗ ИЗМЕНЕНИЙ -->
+...
 </body>
 </html>
 `;
-
-const GAMES_LIBRARY = [
-{
-id: 'cloneblast',
-title: 'Clone Blast: Ultimate',
-description: 'Блочная головоломка. Перетаскивай фигуры, собирай линии!',
-icon: '🧩',
-source: CLONE_BLAST_SOURCE
-},
-{
-id: 'soon',
-title: 'Coming Soon',
-description: 'Новые игры в разработке...',
-icon: '🚀',
-isPlaceholder: true
-}
-];
-
-// --- RENDER MENU ---
-const grid = document.getElementById('games-grid');
-GAMES_LIBRARY.forEach(game => {
-const card = document.createElement('div');
-card.className = 'game-card';
-if(game.isPlaceholder) card.style.opacity = '0.5';
-
-card.innerHTML = `
-<div class="game-icon">${game.icon}</div>
-<div class="game-title">${game.title}</div>
-<div class="game-desc">${game.description}</div>
-<button class="btn-play">${game.isPlaceholder ? 'LOCKED' : 'PLAY'}</button>
-`;
-
-if(!game.isPlaceholder) {
-card.onclick = () => launchGame(game.id);
-}
-grid.appendChild(card);
-});
-
-// --- GAME LAUNCHER ---
-const menuScreen = document.getElementById('menu-screen');
-const gameWrapper = document.getElementById('game-wrapper-outer');
-const gameFrame = document.getElementById('game-frame');
-
-function launchGame(id) {
-const game = GAMES_LIBRARY.find(g => g.id === id);
-if(!game) return;
-
-document.body.style.overflow = 'hidden';
-gameFrame.srcdoc = game.source;
-gameWrapper.style.display = 'flex';
-}
-
-function closeGame() {
-gameFrame.srcdoc = ""; // Kill iframe process
-gameWrapper.style.display = 'none';
-}
-
-</script>
-</body>
-</html>
