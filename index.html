@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Game Hub: Ultimate</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+--bg-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+--card-bg: rgba(255, 255, 255, 0.05);
+--card-border: rgba(255, 255, 255, 0.1);
+--accent: #4cc9f0;
+--text-main: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+margin: 0;
+padding: 0;
+background: var(--bg-gradient);
+color: var(--text-main);
+font-family: 'Nunito', sans-serif;
+height: 100vh;
+overflow: hidden;
+}
+
+/* --- MENU SCREENS --- */
+#menu-screen {
+display: flex;
+flex-direction: column;
+align-items: center;
+height: 100%;
+padding: 40px 20px;
+transition: opacity 0.3s ease;
+}
+
+.hub-title {
+font-size: 3rem;
+font-weight: 900;
+text-transform: uppercase;
+letter-spacing: 2px;
+background: linear-gradient(to right, #f72585, #4cc9f0);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+margin-bottom: 40px;
+text-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.games-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 25px;
+width: 100%;
+max-width: 1000px;
+}
+
+/* --- GAME CARD --- */
+.game-card {
+background: var(--card-bg);
+border: 1px solid var(--card-border);
+border-radius: 20px;
+padding: 20px;
+cursor: pointer;
+transition: transform 0.2s, box-shadow 0.2s;
+backdrop-filter: blur(10px);
+display: flex;
+flex-direction: column;
+align-items: center;
+text-align: center;
+position: relative;
+overflow: hidden;
+}
+
+.game-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 15px 30px rgba(76, 201, 240, 0.2);
+border-color: var(--accent);
+}
+
+.game-icon {
+width: 80px;
+height: 80px;
+border-radius: 15px;
+margin-bottom: 15px;
+background: linear-gradient(45deg, #4361ee, #f72585);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 30px;
+}
+
+.game-title { font-size: 1.5rem; font-weight: 800; margin-bottom: 5px; }
+.game-desc { font-size: 0.9rem; color: #a0a0a0; margin-bottom: 20px; }
+
+.btn-play {
+background: var(--accent);
+color: #000;
+border: none;
+padding: 10px 30px;
+border-radius: 50px;
+font-weight: 800;
+text-transform: uppercase;
+font-size: 0.9rem;
+width: 100%;
+}
+
+/* --- PLACEHOLDER CARD (FOR FUTURE) --- */
+.game-card.soon {
+opacity: 0.5;
+cursor: default;
+}
+.game-card.soon:hover { transform: none; box-shadow: none; border-color: var(--card-border); }
+
+/* --- GAME CONTAINER (IFRAME) --- */
+#game-container {
+position: absolute;
+top: 0; left: 0; width: 100%; height: 100%;
+background: #000;
+display: none; /* Hidden by default */
+flex-direction: column;
+z-index: 1000;
+}
+
+#game-frame {
+flex: 1;
+border: none;
+width: 100%;
+height: 100%;
+}
+
+/* NAVIGATION BAR OVER GAME */
+.game-nav {
+height: 50px;
+background: #1a1a2e;
+display: flex;
+align-items: center;
+padding: 0 20px;
+border-bottom: 1px solid var(--card-border);
+}
+
+.btn-back {
+background: transparent;
+border: 1px solid var(--card-border);
+color: white;
+padding: 5px 15px;
+border-radius: 8px;
+cursor: pointer;
+font-family: 'Nunito', sans-serif;
+font-weight: 700;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.btn-back:hover { background: rgba(255,255,255,0.1); }
+
+</style>
+</head>
+<body>
+
+<div id="menu-screen">
+<div class="hub-title">ARCADE HUB</div>
+
+<div class="games-grid" id="games-grid">
+</div>
+</div>
+
+<div id="game-container">
+<div class="game-nav">
+<button class="btn-back" onclick="closeGame()">
+<span>←</span> BACK TO MENU
+</button>
+</div>
+<iframe id="game-frame"></iframe>
+</div>
+
+<script>
+// --- 1. LIBRARY OF GAMES ---
+// Сюда ты будешь добавлять новые игры.
+// Просто добавь новый объект в этот массив.
+
+// Код твоей игры Clone Blast (сокращенно, чтобы работало)
+const CLONE_BLAST_SOURCE = `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Clone Blast</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+/* ТВОЙ CSS КОД СЮДА ПОЛНОСТЬЮ */
+:root { --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); --glass-bg: rgba(255, 255, 255, 0.05); --glass-border: rgba(255, 255, 255, 0.1); --text-main: #ffffff; --text-secondary: #a0a0a0; --accent-color: #4cc9f0; --danger-color: #f72585; }
+* { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; padding: 0; background: var(--bg-gradient); color: var(--text-main); font-family: 'Nunito', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; touch-action: none; }
+.ui-header { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 15px; }
+.logo { font-size: 28px; font-weight: 900; background: linear-gradient(to right, #4cc9f0, #4361ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 4px 15px rgba(67, 97, 238, 0.3); }
+.score-board { display: flex; gap: 15px; }
+.score-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 8px 16px; text-align: center; backdrop-filter: blur(10px); min-width: 80px; }
+.score-label { font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+.score-value { font-size: 20px; font-weight: 800; color: var(--text-main); }
+#game-wrapper { position: relative; padding: 10px; background: rgba(0, 0, 0, 0.2); border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 1px var(--glass-border); }
+canvas { border-radius: 12px; display: block; cursor: grab; }
+canvas:active { cursor: grabbing; }
+#overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 26, 46, 0.85); backdrop-filter: blur(8px); border-radius: 20px; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; opacity: 0; transition: opacity 0.3s ease; }
+#overlay.visible { opacity: 1; }
+#overlay h2 { font-size: 40px; margin: 0 0 10px 0; background: linear-gradient(to right, #f72585, #b5179e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.btn-restart { background: linear-gradient(45deg, #4361ee, #4cc9f0); border: none; padding: 15px 40px; font-family: 'Nunito', sans-serif; font-size: 18px; font-weight: 800; color: white; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 20px rgba(67, 97, 238, 0.4); transition: transform 0.1s, box-shadow 0.1s; margin-top: 20px; }
+.btn-restart:hover { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(67, 97, 238, 0.5); }
+.btn-restart:active { transform: scale(0.95); }
+</style>
+</head>
+<body>
+<div class="ui-header">
+<div class="logo">CLONE BLAST</div>
+<div class="score-board">
+<div class="score-card"><div class="score-label">Best</div><div class="score-value" id="high-score">0</div></div>
+<div class="score-card"><div class="score-label">Score</div><div class="score-value" id="current-score">0</div></div>
+</div>
+</div>
+<div id="game-wrapper">
+<canvas id="gameCanvas"></canvas>
+<div id="overlay">
+<h2>NO MOVES!</h2>
+<div class="score-label">FINAL SCORE</div>
+<div class="score-value" id="final-score" style="font-size: 32px; margin-bottom: 10px;">0</div>
+<button class="btn-restart" onclick="restartGame()">TRY AGAIN</button>
+</div>
+</div>
+<script>
+/* ТВОЙ JS КОД СЮДА ПОЛНОСТЬЮ */
+const canvas=document.getElementById('gameCanvas'),ctx=canvas.getContext('2d',{alpha:!1});const GRID_SIZE=8,BOARD_PADDING=15,HAND_HEIGHT=180;let CELL_SIZE=0;const PALETTE=["#ff595e","#ffca3a","#8ac926","#1982c4","#6a4c93","#f15bb5","#4cc9f0"],SHAPES=[[[1]],[[1,1]],[[1],[1]],[[1,1,1]],[[1],[1],[1]],[[1,1],[1,1]],[[1,1,1],[0,1,0]],[[0,1,0],[1,1,1]],[[1,0],[1,0],[1,1]],[[0,1],[0,1],[1,1]],[[1,1],[0,1]],[[1,1],[1,0]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]]];let grid=[],hand=[],score=0,displayScore=0,highScore=localStorage.getItem('cb_highscore')||0,isGameOver=!1,comboCount=0;const scoreEl=document.getElementById('current-score'),highScoreEl=document.getElementById('high-score'),finalScoreEl=document.getElementById('final-score'),overlay=document.getElementById('overlay');let particles=[],floatingTexts=[],shakeIntensity=0,draggingShape=null,dragOffset={x:0,y:0},previewCoords=null,time=0;const AudioEngine={ctx:new(window.AudioContext||window.webkitAudioContext),play(e){if("suspended"===this.ctx.state&&this.ctx.resume(),e){const t=this.ctx.currentTime,n=this.ctx.createOscillator(),a=this.ctx.createGain();if(n.connect(a),a.connect(this.ctx.destination),"pickup"===e)n.frequency.setValueAtTime(300,t),n.frequency.exponentialRampToValueAtTime(600,t+.1),a.gain.setValueAtTime(.1,t),a.gain.linearRampToValueAtTime(0,t+.1),n.start(t),n.stop(t+.1);else if("drop"===e)n.type="triangle",n.frequency.setValueAtTime(150,t),n.frequency.exponentialRampToValueAtTime(50,t+.2),a.gain.setValueAtTime(.2,t),a.gain.linearRampToValueAtTime(0,t+.2),n.start(t),n.stop(t+.2);else if("clear"===e){[400,600,800].forEach((e,n)=>{const a=this.ctx.createOscillator(),o=this.ctx.createGain();a.type="sine",a.connect(o),o.connect(this.ctx.destination),a.frequency.value=e*(1+.2*comboCount),o.gain.setValueAtTime(.1,t),o.gain.exponentialRampToValueAtTime(.01,t+.3+.1*n),a.start(t),a.stop(t+.5)})}}}};function init(){highScoreEl.innerText=highScore,resize(),window.addEventListener('resize',resize),canvas.addEventListener('pointerdown',onDown),window.addEventListener('pointermove',onMove),window.addEventListener('pointerup',onUp),canvas.addEventListener('touchmove',e=>e.preventDefault(),{passive:!1}),restartGame(),requestAnimationFrame(loop)}function resize(){const e=Math.min(window.innerWidth-20,500);CELL_SIZE=Math.floor((e-2*BOARD_PADDING)/GRID_SIZE),canvas.width=CELL_SIZE*GRID_SIZE+2*BOARD_PADDING,canvas.height=canvas.width+HAND_HEIGHT}function restartGame(){grid=Array(GRID_SIZE).fill().map(()=>Array(GRID_SIZE).fill(null)),hand=[],score=0,displayScore=0,comboCount=0,isGameOver=!1,particles=[],floatingTexts=[],overlay.style.display='none',overlay.classList.remove('visible'),spawnHand()}function loop(){time+=.05,update(),draw(),requestAnimationFrame(loop)}function update(){displayScore<score&&(displayScore+=Math.ceil((score-displayScore)/5),scoreEl.innerText=displayScore),shakeIntensity>0&&(shakeIntensity*=.9),shakeIntensity<.5&&(shakeIntensity=0);for(let e=particles.length-1;e>=0;e--){let t=particles[e];t.x+=t.vx,t.y+=t.vy,t.vy+=.5,t.life-=.02,t.rotation+=t.rv,t.life<=0&&particles.splice(e,1)}for(let e=floatingTexts.length-1;e>=0;e--){let t=floatingTexts[e];t.y-=1.5,t.life-=.015,t.life<=0&&floatingTexts.splice(e,1)}}function spawnHand(){hand=[];const e=canvas.width/3;for(let t=0;t<3;t++){const n=SHAPES[Math.floor(Math.random()*SHAPES.length)],a=PALETTE[Math.floor(Math.random()*PALETTE.length)];hand.push({matrix:n,color:a,baseX:e*t+e/2,baseY:canvas.height-HAND_HEIGHT/2,x:e*t+e/2,y:canvas.height-HAND_HEIGHT/2,scale:.6,isPlaced:!1,targetScale:.6})}comboCount=0,checkLoss()}function onDown(e){if(isGameOver)return;const t=getPos(e);for(let n of hand)if(!n.isPlaced){const a=n.matrix[0].length*CELL_SIZE*n.scale,o=n.matrix.length*CELL_SIZE*n.scale;if(Math.abs(t.x-n.x)<a&&Math.abs(t.y-n.y)<o){draggingShape=n,n.targetScale=1,dragOffset={x:t.x-n.x,y:t.y-n.y+70},AudioEngine.play('pickup');break}}}function onMove(e){if(!draggingShape)return;const t=getPos(e);draggingShape.x=t.x-dragOffset.x,draggingShape.y=t.y-dragOffset.y,draggingShape.scale+=.3*(draggingShape.targetScale-draggingShape.scale);const n=draggingShape.matrix[0].length,a=draggingShape.matrix.length,o=Math.round((draggingShape.y-BOARD_PADDING)/CELL_SIZE-a/2),r=Math.round((draggingShape.x-BOARD_PADDING)/CELL_SIZE-n/2);canPlace(draggingShape.matrix,o,r)?previewCoords={r:o,c:r}:previewCoords=null}function onUp(e){if(draggingShape)if(previewCoords){placeShape(draggingShape,previewCoords.r,previewCoords.c),draggingShape.isPlaced=!0,draggingShape.scale=0,AudioEngine.play('drop'),checkLines(),hand.every(e=>e.isPlaced)?setTimeout(spawnHand,200):checkLoss()}else{const e=t=>{const n=t.baseX-t.x,a=t.baseY-t.y;Math.abs(n)<1&&Math.abs(a)<1?(t.x=t.baseX,t.y=t.baseY,t.scale=.6):(t.x+=.2*n,t.y+=.2*a,t.scale+=.2*(.6-t.scale),requestAnimationFrame(()=>e(t)))};e(draggingShape)}draggingShape=null,previewCoords=null}function getPos(e){const t=canvas.getBoundingClientRect();return{x:e.clientX-t.left,y:e.clientY-t.top}}function canPlace(e,t,n){for(let a=0;a<e.length;a++)for(let o=0;o<e[a].length;o++)if(e[a][o]&&(t+a<0||t+a>=GRID_SIZE||n+o<0||n+o>=GRID_SIZE||grid[t+a][n+o]))return!1;return!0}function placeShape(e,t,n){e.matrix.forEach((a,o)=>{a.forEach((a,r)=>{a&&(grid[t+o][n+r]=e.color)})}),addScore(10)}function checkLines(){const e=[],t=[];for(let n=0;n<GRID_SIZE;n++)grid[n].every(e=>e)&&e.push(n);for(let e=0;e<GRID_SIZE;e++)grid.map(t=>t[e]).every(e=>e)&&t.push(e);const n=e.length+t.length;if(n>0){comboCount++,shakeIntensity=4*n,AudioEngine.play('clear'),e.forEach(e=>{for(let t=0;t<GRID_SIZE;t++)grid[e][t]&&(createExplosion(e,t,grid[e][t]),grid[e][t]=null)}),t.forEach(t=>{for(let e=0;e<GRID_SIZE;e++)grid[e][t]&&(createExplosion(e,t,grid[e][t]),grid[e][t]=null)});let a=100*n,o=Math.floor(a*(1+.5*(n-1)+(comboCount>1?.5:0))),r=\`+\${o}\`;n>1&&(r="COMBO!"),comboCount>2&&(r="INSANE!"),spawnFloatText(r,canvas.width/2,canvas.height/2-50,n>1?40:25,"#fff"),addScore(o)}else comboCount=0}function createExplosion(e,t,n){const a=BOARD_PADDING+t*CELL_SIZE+CELL_SIZE/2,o=BOARD_PADDING+e*CELL_SIZE+CELL_SIZE/2;for(let e=0;e<4;e++)particles.push({x:a,y:o,vx:12*(Math.random()-.5),vy:12*(Math.random()-.5),life:1,color:n,size:CELL_SIZE/2*Math.random(),rotation:Math.random()*Math.PI,rv:.2*(Math.random()-.5)})}function spawnFloatText(e,t,n,a,o){floatingTexts.push({text:e,x:t,y:n,size:a,color:o,life:1})}function addScore(e){score+=e,score>highScore&&(highScore=score,localStorage.setItem('cb_highscore',highScore),highScoreEl.innerText=highScore)}function checkLoss(){const e=hand.filter(e=>!e.isPlaced);if(0===e.length)return;let t=!1;for(let n of e){for(let a=-2;a<GRID_SIZE;a++){for(let o=-2;o<GRID_SIZE;o++)if(canPlace(n.matrix,a,o)){t=!0;break}if(t)break}if(t)break}t||(isGameOver=!0,setTimeout(()=>{finalScoreEl.innerText=score,overlay.style.display='flex',requestAnimationFrame(()=>overlay.classList.add('visible'))},500))}function draw(){ctx.fillStyle='#1e1e2e',ctx.clearRect(0,0,canvas.width,canvas.height),ctx.save(),shakeIntensity>.5&&(ctx.translate((Math.random()-.5)*shakeIntensity,(Math.random()-.5)*shakeIntensity)),drawGridBg();for(let e=0;e<GRID_SIZE;e++)for(let t=0;t<GRID_SIZE;t++)grid[e][t]&&drawBlock(e,t,grid[e][t]);if(previewCoords&&draggingShape){ctx.globalAlpha=.2,draggingShape.matrix.forEach((e,t)=>{e.forEach((e,n)=>{e&&drawBlock(previewCoords.r+t,previewCoords.c+n,draggingShape.color,!0)})}),ctx.globalAlpha=1}hand.forEach(e=>{e.isPlaced||drawShape(e)}),particles.forEach(e=>{ctx.save(),ctx.translate(e.x,e.y),ctx.rotate(e.rotation),ctx.globalAlpha=e.life,ctx.fillStyle=e.color,ctx.fillRect(-e.size/2,-e.size/2,e.size,e.size),ctx.restore()}),floatingTexts.forEach(e=>{ctx.globalAlpha=Math.max(0,e.life),ctx.fillStyle=e.color,ctx.font=\`900 \${e.size}px 'Nunito'\`,ctx.textAlign='center',ctx.strokeStyle='black',ctx.lineWidth=3,ctx.strokeText(e.text,e.x,e.y),ctx.fillText(e.text,e.x,e.y),ctx.globalAlpha=1}),ctx.restore()}function drawGridBg(){for(let e=0;e<GRID_SIZE;e++)for(let t=0;t<GRID_SIZE;t++){const n=BOARD_PADDING+t*CELL_SIZE,a=BOARD_PADDING+e*CELL_SIZE,o=CELL_SIZE-4;ctx.fillStyle="rgba(0,0,0,0.3)",roundRect(n+2,a+2,o,o,6),ctx.fill()}}function drawBlock(e,t,n,a){const o=BOARD_PADDING+t*CELL_SIZE,r=BOARD_PADDING+e*CELL_SIZE,i=CELL_SIZE-2;if(a)return ctx.fillStyle="#ffffff",roundRect(o+1,r+1,i,i,8),void ctx.fill();ctx.fillStyle=n,ctx.shadowColor=n,ctx.shadowBlur=10,roundRect(o+1,r+1,i,i,8),ctx.fill(),ctx.shadowBlur=0,ctx.fillStyle="rgba(255,255,255,0.3)",ctx.beginPath(),ctx.moveTo(o+1,r+1+i),ctx.lineTo(o+1,r+1),ctx.lineTo(o+1+i,r+1),ctx.lineTo(o+1+i-4,r+1+4),ctx.lineTo(o+1+4,r+1+4),ctx.lineTo(o+1+4,r+1+i-4),ctx.closePath(),ctx.fill()}function drawShape(e){const t=CELL_SIZE*e.scale,n=e.matrix[0].length*t,a=e.matrix.length*t,o=e.x-n/2,r=e.y-a/2;e.matrix.forEach((n,a)=>{n.forEach((n,i)=>{if(n){const l=o+i*t,s=r+a*t;ctx.fillStyle=e.color,e===draggingShape&&(ctx.shadowColor=e.color,ctx.shadowBlur=20),roundRect(l+1,s+1,t-2,t-2,6),ctx.fill(),ctx.shadowBlur=0,ctx.fillStyle="rgba(255,255,255,0.4)",ctx.beginPath(),ctx.arc(l+.25*t,s+.25*t,.1*t,0,2*Math.PI),ctx.fill()}})}) }function roundRect(e,t,n,a,o){ctx.beginPath(),ctx.moveTo(e+o,t),ctx.lineTo(e+n-o,t),ctx.quadraticCurveTo(e+n,t,e+n,t+o),ctx.lineTo(e+n,t+a-o),ctx.quadraticCurveTo(e+n,t+a,e+n-o,t+a),ctx.lineTo(e+o,t+a),ctx.quadraticCurveTo(e,t+a,e,t+a-o),ctx.lineTo(e,t+o),ctx.quadraticCurveTo(e,t,e+o,t),ctx.closePath()}init();
+<\/script>
+</body>
+</html>
+`;
+
+const GAMES_LIBRARY = [
+{
+id: 'cloneblast',
+title: 'Clone Blast: Ultimate',
+description: 'Блочная головоломка. Перетаскивай фигуры, собирай линии!',
+icon: '🧩', // Можно заменить на картинку
+source: CLONE_BLAST_SOURCE
+},
+{
+id: 'coming-soon',
+title: 'Coming Soon',
+description: 'Новая игра в разработке...',
+icon: '🚀',
+isPlaceholder: true
+}
+];
+
+// --- 2. RENDER MENU ---
+const grid = document.getElementById('games-grid');
+
+function renderMenu() {
+grid.innerHTML = '';
+GAMES_LIBRARY.forEach(game => {
+const card = document.createElement('div');
+card.className = `game-card ${game.isPlaceholder ? 'soon' : ''}`;
+
+if (!game.isPlaceholder) {
+card.onclick = () => launchGame(game.id);
+}
+
+card.innerHTML = `
+<div class="game-icon">${game.icon}</div>
+<div class="game-title">${game.title}</div>
+<div class="game-desc">${game.description}</div>
+<button class="btn-play">${game.isPlaceholder ? 'Locked' : 'PLAY'}</button>
+`;
+grid.appendChild(card);
+});
+}
+
+// --- 3. GAME LAUNCHER LOGIC ---
+const menuScreen = document.getElementById('menu-screen');
+const gameContainer = document.getElementById('game-container');
+const gameFrame = document.getElementById('game-frame');
+
+function launchGame(id) {
+const game = GAMES_LIBRARY.find(g => g.id === id);
+if (!game) return;
+
+// UI Transition
+menuScreen.style.display = 'none';
+gameContainer.style.display = 'flex';
+
+// Inject the game code into the iframe
+// We use 'srcdoc' to render the HTML string directly
+gameFrame.srcdoc = game.source;
+}
+
+function closeGame() {
+// UI Transition
+gameContainer.style.display = 'none';
+menuScreen.style.display = 'flex';
+
+// IMPORTANT: Clear the iframe to stop the game loop and sounds completely
+gameFrame.srcdoc = "";
+}
+
+// Init
+renderMenu();
+
+</script>
+</body>
+</html>
